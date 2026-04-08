@@ -1,32 +1,18 @@
-import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import sent_tokenize, word_tokenize
+from transformers import pipeline
 
-nltk.download('punkt')
-nltk.download('punkt_tab')
-nltk.download('stopwords')
+# Load model once
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 def summarize_text(text):
 
-    sentences = sent_tokenize(text)
+    # Limit input length (important)
+    text = text[:1000]
 
-    words = word_tokenize(text.lower())
-    stop_words = set(stopwords.words("english"))
+    summary = summarizer(
+        text,
+        max_length=120,
+        min_length=30,
+        do_sample=False
+    )
 
-    word_freq = {}
-
-    for word in words:
-        if word.isalnum() and word not in stop_words:
-            word_freq[word] = word_freq.get(word, 0) + 1
-
-    sentence_scores = {}
-
-    for sent in sentences:
-        for word in word_tokenize(sent.lower()):
-            if word in word_freq:
-                sentence_scores[sent] = sentence_scores.get(sent, 0) + word_freq[word]
-
-    # Pick top 3 sentences
-    summary = sorted(sentence_scores, key=sentence_scores.get, reverse=True)[:3]
-
-    return " ".join(summary)
+    return summary[0]['summary_text']
