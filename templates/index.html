@@ -143,6 +143,27 @@
                 btn.innerText = "🌙 Dark Mode";
             }
         }
+        // Load saved mode
+        if (localStorage.getItem("mode") === "dark") {
+            document.body.classList.remove("light");
+            document.body.classList.add("dark");
+        }
+
+        // Save mode
+        function toggleMode() {
+            const body = document.body;
+            const btn = document.querySelector(".toggle-btn");
+
+            if (body.classList.contains("light")) {
+                body.classList.replace("light", "dark");
+                btn.innerText = "☀️ Light Mode";
+                localStorage.setItem("mode", "dark");
+            } else {
+                body.classList.replace("dark", "light");
+                btn.innerText = "🌙 Dark Mode";
+                localStorage.setItem("mode", "light");
+            }
+        }
     </script>
 
 </body>
